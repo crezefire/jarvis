@@ -75,17 +75,17 @@ var libcom = function() {
 			for(var i in parent.children) {
 				if(parent.children[i].name == commandsArray[currentIndex]) {
 					
-					var help = processHelp(commandsArray[++currentIndex], parent.children[i]);
+					var help = processHelp(commandsArray[currentIndex + 1], parent.children[i]);
 		
 					if(help != "false")
 						return help;
 					
-					return commandProcessor(commandsArray, ++currentIndex, parent.children[i]);
+					return commandProcessor(commandsArray, currentIndex + 1, parent.children[i]);
 				}
 			}
 		}
 		else {
-			parent.callback(commandsArray.slice(currentIndex++));
+			parent.callback(commandsArray.slice(currentIndex + 1));
 			return "Success";	
 		}
 		
