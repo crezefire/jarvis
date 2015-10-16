@@ -92,7 +92,7 @@ var libcom = function() {
 			}
 		}
 		else {
-			parent.callback(commandsArray.slice(currentIndex + 1));
+			parent.callback(commandsArray.slice(currentIndex));
 			return ErrorCode.SUCCESS;	
 		}
 		

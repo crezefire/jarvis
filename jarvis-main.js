@@ -9,8 +9,6 @@ var handler = new CallbackHandler();
 
 var bot; // Track bot user .. for detecting messages by yourself
 
-var isActive = true;
-
 var noCall = function(args) {
     console.log(args);
     console.log("Incomplete Call");
@@ -27,14 +25,25 @@ slackClient.on('open', function() {
 });
 
 //***********************
-var jklCommand = new LibComModule.LCommand(":jkl:", 2, false, "Interact with Jarvis", "-", noCall);
+var jklCommand = new LibComModule.LCommand(":jkl:", 1, false, "Interact with Jarvis", "-", noCall);
 libcommander.AddRootCommand(jklCommand);
-
-var groupCommand = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
-jklCommand.AddChild(groupCommand);
-
-var groupAddCommand = new LibComModule.LCommand("add", 2, false, "Add a new public/private group", "*type* *name*", handler.OnGroupAdd);
-groupCommand.AddChild(groupAddCommand);
+{
+    var groupCommand = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
+    jklCommand.AddChild(groupCommand);
+    {
+        var groupAddCommand = new LibComModule.LCommand("add", 2, false, "Add a new public/private group", "*type* *name*", handler.OnGroupAdd);
+        groupCommand.AddChild(groupAddCommand);
+        
+        var groupListCommand = new LibComModule.LCommand("ls", 1, false, "Lists the required group", "*groupname*", handler.OnGroupList);
+        groupCommand.AddChild(groupListCommand);
+        
+        var groupRemoveCommand = new LibComModule.LCommand("rm", 1, false, "Deletes the group", "*groupname*", handler.OnGroupRemove);
+        groupCommand.AddChild(groupRemoveCommand);
+        
+        var groupRenameCommand = new LibComModule.LCommand("mv", 1, false, "Renames the required group", "*groupname*", handler.OnGroupRename);
+        groupCommand.AddChild(groupRenameCommand);
+    }
+}
 
 handler.SetupSlack(slackClient);
 //***********************
@@ -46,13 +55,13 @@ slackClient.on('message', function(message) {
     
     var cleanMessage = message.text.replace(/@/g, '');
 
-    slackClient._send({ type: "typing", channel: message.channel });
+    // slackClient._send({ type: "typing", channel: message.channel });
     
     handler.CurrentChannel(channel);
     
     var output = libcommander.ProcessCommand(cleanMessage);
     
-    if(output != libcommander.SUCCESS) {
+    if(output != "Success" && output != "Root command doesn't match") {
          channel.send(output);   
     }
 });
