@@ -27,7 +27,7 @@ slackClient.on('open', function() {
 });
 
 //***********************
-var jklCommand = new LibComModule.LCommand("jkl", 2, false, "Interact with Jarvis", "-", noCall);
+var jklCommand = new LibComModule.LCommand(":jkl:", 2, false, "Interact with Jarvis", "-", noCall);
 libcommander.AddRootCommand(jklCommand);
 
 var groupCommand = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
@@ -50,7 +50,11 @@ slackClient.on('message', function(message) {
     
     handler.CurrentChannel(channel);
     
-    channel.send(libcommander.ProcessCommand(cleanMessage));
+    var output = libcommander.ProcessCommand(cleanMessage);
+    
+    if(output != libcommander.SUCCESS) {
+         channel.send(output);   
+    }
 });
  
 slackClient.login();

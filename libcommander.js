@@ -4,6 +4,13 @@ Vimarsh Raina
 <me@vimarshraina.com>
 *******************************/
 
+var ErrorCode = {
+	SUCCESS: "Success",
+	INSUFFICIENT: "InsufficientCommands",
+	NOT_FOUND: "Command not found",
+	ROOT_MISMATCH: "Root command doesn't match"
+};
+
 var Command = function(name, minArgs, caseSensitive, description, usage, callback) {
 	
 	this.name = name;
@@ -68,7 +75,7 @@ var libcom = function() {
 	
 	function commandProcessor(commandsArray, currentIndex, parent) {
 		if(commandsArray.length - currentIndex + 1 < parent.minArgs) {
-			return "Insufficient commands entered";
+			return ErrorCode.INSUFFICIENT;
 		}
 		
 		if(parent.children.length > 0) {
@@ -86,17 +93,17 @@ var libcom = function() {
 		}
 		else {
 			parent.callback(commandsArray.slice(currentIndex + 1));
-			return "Success";	
+			return ErrorCode.SUCCESS;	
 		}
 		
-		return "Command not found";	
+		return ErrorCode.NOT_FOUND;	
 	}
 	
 	libcom.prototype.ProcessCommand = function(commandString) {
 		var commands = commandString.split(" ");
 		
 		if(commands.length < this.RootCommand.minArgs)
-			return "Insufficient commands entered";
+			return ErrorCode.INSUFFICIENT;
 			
 		if(commands[0] == this.RootCommand.name) {
 			
@@ -108,7 +115,7 @@ var libcom = function() {
 			return commandProcessor(commands, 1, this.RootCommand);
 		}
 		
-		return "Root command doesn't match";
+		return ErrorCode.ROOT_MISMATCH;
 	}
 	
 	function PrintTabs(num) {
@@ -143,3 +150,4 @@ var libcom = function() {
 
 module.exports = libcom;
 module.exports.LCommand = Command;
+module.exports.EC = ErrorCode;
