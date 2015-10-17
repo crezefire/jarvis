@@ -74,7 +74,7 @@ var libcom = function() {
 	}
 	
 	function commandProcessor(commandsArray, currentIndex, parent) {
-		if(commandsArray.length - currentIndex + 1 < parent.minArgs) {
+		if(commandsArray.length - currentIndex < parent.minArgs) {
 			return ErrorCode.INSUFFICIENT;
 		}
 		

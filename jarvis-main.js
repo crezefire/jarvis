@@ -25,24 +25,40 @@ slackClient.on('open', function() {
 });
 
 //***********************
-var jklCommand = new LibComModule.LCommand(":jkl:", 1, false, "Interact with Jarvis", "-", noCall);
-libcommander.AddRootCommand(jklCommand);
+var jkl = new LibComModule.LCommand(":jkl:", 1, false, "Interact with Jarvis", "-", noCall);
+libcommander.AddRootCommand(jkl);
 {
-    var groupCommand = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
-    jklCommand.AddChild(groupCommand);
+    var group = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
+    jkl.AddChild(group);
     {
-        var groupAddCommand = new LibComModule.LCommand("add", 2, false, "Add a new public/private group", "*type* *name*", handler.OnGroupAdd);
-        groupCommand.AddChild(groupAddCommand);
+        var groupAdd = new LibComModule.LCommand("add", 2, false, "Add a new public/private group", "*type* *name*", handler.OnGroupAdd);
+        group.AddChild(groupAdd);
         
-        var groupListCommand = new LibComModule.LCommand("ls", 1, false, "Lists the required group", "*groupname*", handler.OnGroupList);
-        groupCommand.AddChild(groupListCommand);
+        var groupList = new LibComModule.LCommand("ls", 1, false, "Lists the required group", "*groupname*", handler.OnGroupList);
+        group.AddChild(groupList);
         
-        var groupRemoveCommand = new LibComModule.LCommand("rm", 1, false, "Deletes the group", "*groupname*", handler.OnGroupRemove);
-        groupCommand.AddChild(groupRemoveCommand);
+        var groupRemove = new LibComModule.LCommand("rm", 1, false, "Deletes the group", "*groupname*", handler.OnGroupRemove);
+        group.AddChild(groupRemove);
         
-        var groupRenameCommand = new LibComModule.LCommand("mv", 1, false, "Renames the required group", "*groupname*", handler.OnGroupRename);
-        groupCommand.AddChild(groupRenameCommand);
+        var groupRename = new LibComModule.LCommand("mv", 1, false, "Renames the required group", "*groupname*", handler.OnGroupRename);
+        group.AddChild(groupRename);
     }
+
+    var user = new LibComModule.LCommand("user", 1, false, "Manage users in groups", "", noCall);
+    jkl.AddChild(user);
+    {
+        var userAdd = new LibComModule.LCommand("add", 2, false, "Add user(s) to a group", "*groupname* *name* *name* ...", handler.OnUserAdd);
+        user.AddChild(userAdd);
+        
+        var userList = new LibComModule.LCommand("ls", 1, false, "Lists all users in the group", "*groupname*", handler.OnUserList);
+        user.AddChild(userList);
+        
+        var userRemove = new LibComModule.LCommand("rm", 2, false, "Removes user(s) from a group", "*groupname* *user* *user* ...", handler.OnUserRemove);
+        user.AddChild(userRemove);
+    }
+    
+    var buddy = new LibComModule.LCommand("buddy", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
+    jkl.AddChild(buddy);
 }
 
 handler.SetupSlack(slackClient);
@@ -58,6 +74,7 @@ slackClient.on('message', function(message) {
     // slackClient._send({ type: "typing", channel: message.channel });
     
     handler.CurrentChannel(channel);
+    handler.ChannelID(message.channel);
     
     var output = libcommander.ProcessCommand(cleanMessage);
     

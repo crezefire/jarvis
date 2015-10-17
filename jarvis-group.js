@@ -79,6 +79,22 @@ var group_api = function() {
 
     return true;
   }
+  
+  group_api.prototype.RemoveUserFromGroup = function(users, groupName) {
+    if(!groups[groupName])
+      return false;
+      
+    var currentGroup = groups[groupName];
+      
+    for (var i in users) {
+      var index = currentGroup.indexOf(users[i]); 
+      if(index >= 0) {
+        delete currentGroup[index];
+      }
+    }
+    
+    return true;
+  }
 
   group_api.prototype.GroupList = function() {
     var arr = new String();
@@ -109,6 +125,19 @@ var group_api = function() {
       return arr;
     else
       return null;
+  }
+  
+  group_api.prototype.SelectBuddy = function(groupName, userName) {
+    if(!groups[groupName])
+      return false;
+      
+      var asdf = groups[groupName];
+    
+    //check if pool exists
+    if(!groups[groupName]["pool"])
+      groups[groupName]["pool"] = [];
+    
+    return true;
   }
 
   group_api.prototype.SetReminderForGroup = function(groupName, time, message) {
