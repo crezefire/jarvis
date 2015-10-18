@@ -7,6 +7,8 @@ To be/currently supported commands:
 
 - group add | ls | rm | mv
 - user add | ls | rm
-- group remind
-- group message
 - :game_die: (: game_die :)
+- msg
+- remind
+
+All commands support a help parameter

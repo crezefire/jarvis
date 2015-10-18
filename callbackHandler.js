@@ -170,7 +170,20 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.Buddy = function(args) {
-		groups.SelectBuddy(args[0], currentUser, slackChannel, slackClient);
+		if(!groups.SelectBuddy(args[0], currentUser, slackChannel, slackClient)) {
+			slackChannel.send(">Group *" + args[0] + "* doesn't exist!");
+		}
+	}
+	
+	CallbackHandler.prototype.SendMessage = function(args) {
+		var message = new String();
+		for(var i = 1; i < args.length; ++i) {
+			message += args[i] + " ";
+		}
+		
+		if(!groups.SendMessage(args[0], currentUser, message, slackClient)) {
+			slackChannel.send(">Group *" + args[0] + "* doesn't exist!");
+		}
 	}
 
 }

@@ -175,8 +175,33 @@ var group_api = function() {
       }
     }
       
-      return true;
+    return true;
+  }
+  
+  function SendMessageToUser(user, message, slackClient) {
+    var userName = slackClient.getUserByID(user).name;
+    
+    var dmChannel = slackClient.getDMByName(userName);
+    
+    dmChannel.send(message);
+    
+  }
+  
+  group_api.prototype.SendMessage = function(groupName, user, message, slackClient) {
+    if(!groups[groupName]) {
+      return false;
     }
+    
+    var userName = slackClient.getUserByID(user).name;
+    
+    var text = "*" + groupName + "* (" + userName + "): >" + message + "<";
+    
+    for(var i in groups[groupName]) {
+      SendMessageToUser(groups[groupName][i], text, slackClient);
+    }
+    
+    return true;
+  }
 
   group_api.prototype.SetReminderForGroup = function(groupName, time, message) {
     if(!groups[groupName])

@@ -59,6 +59,9 @@ libcommander.AddRootCommand(jkl);
     
     var buddy = new LibComModule.LCommand(":game_die:", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
     jkl.AddChild(buddy);
+    
+    var message = new LibComModule.LCommand("msg", 2, false, "Send DM to all users in a group", "*groupname* *message*", handler.SendMessage);
+    jkl.AddChild(message);
 }
 
 handler.SetupSlack(slackClient);
