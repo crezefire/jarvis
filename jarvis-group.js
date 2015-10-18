@@ -1,4 +1,5 @@
 var groups = [];
+var pools = [];
 var reminderID  = 0;
 var reminders = [];
 
@@ -20,6 +21,7 @@ var group_api = function() {
       return false;
 
     groups[name] = [];
+    pools[name] = [];
 
     return true;
   }
@@ -75,6 +77,7 @@ var group_api = function() {
     for(i in users) {
       if(groups[groupName].indexOf(users[i]) < 0)
         groups[groupName].push(users[i]);
+        pools[groupName].push(users[i]);
     }
 
     return true;
@@ -90,6 +93,9 @@ var group_api = function() {
       var index = currentGroup.indexOf(users[i]); 
       if(index >= 0) {
         delete currentGroup[index];
+        currentGroup.splice(index, 1);
+        
+        RemoveFromPool(pools[groupName], users[i]);
       }
     }
     
@@ -127,18 +133,50 @@ var group_api = function() {
       return null;
   }
   
-  group_api.prototype.SelectBuddy = function(groupName, userName) {
+  function randomInt (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+  }
+  
+  function RemoveFromPool (pool, user) {
+    var index = pool.indexOf(user);
+    if(index >= 0) {
+      delete pool[index];
+      pool.splice(index, 1);
+    }
+  }
+  
+  function SelectBuddyFromPoolAndRemove(groupName, channel, slackClient) {
+    var index = randomInt(0, pools[groupName].length);
+    
+    var toRemove = pools[groupName][index];
+    
+    var userName = slackClient.getUserByID(toRemove).name.toString();
+    userName = "@" + userName;
+    
+    for(var i in pools) {
+      RemoveFromPool(pools[i], toRemove);
+    }
+    
+    channel.send("Buddy time: " + userName);
+  }
+  
+  group_api.prototype.SelectBuddy = function(groupName, userName, channel, slackClient) {
     if(!groups[groupName])
       return false;
       
-      var asdf = groups[groupName];
+    var currentGroup = groups[groupName];
     
-    //check if pool exists
-    if(!groups[groupName]["pool"])
-      groups[groupName]["pool"] = [];
-    
-    return true;
-  }
+    SelectBuddyFromPoolAndRemove(groupName, channel, slackClient);
+      
+    //refill pool if empty
+    if(pools[groupName].length <= 0) {
+      for(var i in currentGroup) {
+        pools[groupName].push(currentGroup[i]);
+      }
+    }
+      
+      return true;
+    }
 
   group_api.prototype.SetReminderForGroup = function(groupName, time, message) {
     if(!groups[groupName])

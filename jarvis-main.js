@@ -57,7 +57,7 @@ libcommander.AddRootCommand(jkl);
         user.AddChild(userRemove);
     }
     
-    var buddy = new LibComModule.LCommand("buddy", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
+    var buddy = new LibComModule.LCommand(":game_die:", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
     jkl.AddChild(buddy);
 }
 
@@ -75,6 +75,7 @@ slackClient.on('message', function(message) {
     
     handler.CurrentChannel(channel);
     handler.ChannelID(message.channel);
+    handler.CurrentUser(message.user);
     
     var output = libcommander.ProcessCommand(cleanMessage);
     

@@ -1,11 +1,12 @@
 var groups_lib = require("./jarvis-group");
 var groups = new groups_lib();
 
-var slackChannel;
-var slackClient;
-var channelID;
-
 var CallbackHandler = function() {
+	
+	var slackChannel;
+	var slackClient;
+	var channelID;
+	var currentUser;
 	
 	CallbackHandler.prototype.SetupSlack = function(client) {
 		slackClient = client;
@@ -17,6 +18,10 @@ var CallbackHandler = function() {
 	
 	CallbackHandler.prototype.ChannelID = function (ID) {
 		channelID = ID;
+	}
+	
+	CallbackHandler.prototype.CurrentUser = function(user) {
+		currentUser = user;
 	}
 	
 	CallbackHandler.prototype.OnGroupAdd = function(args) {
@@ -72,10 +77,6 @@ var CallbackHandler = function() {
 		else {
 			slackChannel.send(">Group ```" + args[0] + "``` doesn't exist.");
 		}
-	}
-	
-	CallbackHandler.prototype.Buddy = function(args) {
-		groups.SelectBuddy(args[0]);
 	}
 	
 	CallbackHandler.prototype.OnUserAdd = function(args) {
@@ -166,6 +167,10 @@ var CallbackHandler = function() {
 		} else {
 			slackChannel.send(">Group *" + args[0] + "* doesn't exist!");
 		}
+	}
+	
+	CallbackHandler.prototype.Buddy = function(args) {
+		groups.SelectBuddy(args[0], currentUser, slackChannel, slackClient);
 	}
 
 }
