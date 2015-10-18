@@ -10,5 +10,6 @@ To be/currently supported commands:
 - :game_die: (: game_die :)
 - msg
 - remind
+- version
 
 All commands support a help parameter

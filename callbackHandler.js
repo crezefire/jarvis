@@ -1,6 +1,8 @@
 var groups_lib = require("./jarvis-group");
 var groups = new groups_lib();
 
+var CURRENT_VERSION = "0.9.1";
+
 var CallbackHandler = function() {
 	
 	var slackChannel;
@@ -184,6 +186,10 @@ var CallbackHandler = function() {
 		if(!groups.SendMessage(args[0], currentUser, message, slackClient)) {
 			slackChannel.send(">Group *" + args[0] + "* doesn't exist!");
 		}
+	}
+	
+	CallbackHandler.prototype.GetVersion = function(args) {
+		slackChannel.send("Jarvis: " + CURRENT_VERSION);
 	}
 
 }

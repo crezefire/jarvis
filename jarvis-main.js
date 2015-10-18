@@ -7,6 +7,8 @@ var libcommander = new LibComModule();
 var CallbackHandler = require('./callbackHandler');
 var handler = new CallbackHandler();
 
+var MAX_MESSAGE_LENGTH = 512;
+
 var bot; // Track bot user .. for detecting messages by yourself
 
 var noCall = function(args) {
@@ -62,6 +64,9 @@ libcommander.AddRootCommand(jkl);
     
     var message = new LibComModule.LCommand("msg", 2, false, "Send DM to all users in a group", "*groupname* *message*", handler.SendMessage);
     jkl.AddChild(message);
+    
+    var version = new LibComModule.LCommand("version", 0, false, "Get current version of Jarvis", "-", handler.GetVersion);
+    jkl.AddChild(version);
 }
 
 handler.SetupSlack(slackClient);
@@ -69,13 +74,18 @@ handler.SetupSlack(slackClient);
 
 slackClient.on('message', function(message) {
     if (message.user == bot.id) return; // Ignore bot's own messages
+    
+    //very dirty solution, need a better way to check
+    if(message.text[0] == ":" && message.text[1] == "j" && message.text[2] == "k"
+        && message.text.length <= MAX_MESSAGE_LENGTH)
+    {}
+    else
+    {return;}
  
     var channel = slackClient.getChannelGroupOrDMByID(message.channel);
     
     var cleanMessage = message.text.replace(/@/g, '');
 
-    // slackClient._send({ type: "typing", channel: message.channel });
-    
     handler.CurrentChannel(channel);
     handler.ChannelID(message.channel);
     handler.CurrentUser(message.user);

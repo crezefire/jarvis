@@ -3,6 +3,8 @@ var pools = [];
 var reminderID  = 0;
 var reminders = [];
 
+var fs = require('fs');
+
 var group_api = function() {
   
   group_api.prototype.removeItem = function (key) {
