@@ -1,5 +1,5 @@
 var SlackClient = require("slack-client");
-var slackClient = new SlackClient("xoxb-11323179413-2JUzcNpuzl8cwjHyJSEWxzb1");
+var slackClient = new SlackClient("xoxb-11323179413-ecAiDe9405FsY2EP3x5J3UL1");
 
 var LibComModule = require('./libcommander');
 var libcommander = new LibComModule();

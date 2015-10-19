@@ -217,7 +217,7 @@ var group_api = function() {
     if(!fd)
       return false;
     
-    fs.writeSync(fd, groups, 0, groups.length, )
+    // fs.writeSync(fd, groups, 0, groups.length, )
   }
   
   group_api.prototype.LoadGroupsFromFile = function(fileName) {
