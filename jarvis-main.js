@@ -36,7 +36,7 @@ libcommander.AddRootCommand(jkl);
         var groupAdd = new LibComModule.LCommand("add", 2, false, "Add a new public/private group", "*type* *name*", handler.OnGroupAdd);
         group.AddChild(groupAdd);
         
-        var groupList = new LibComModule.LCommand("ls", 1, false, "Lists the required group", "*groupname*", handler.OnGroupList);
+        var groupList = new LibComModule.LCommand("ls", 0, false, "Lists all groups", "-", handler.OnGroupList);
         group.AddChild(groupList);
         
         var groupRemove = new LibComModule.LCommand("rm", 1, false, "Deletes the group", "*groupname*", handler.OnGroupRemove);
