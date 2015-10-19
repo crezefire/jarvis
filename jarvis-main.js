@@ -1,5 +1,5 @@
 var SlackClient = require("slack-client");
-var slackClient = new SlackClient("xoxb-11323179413-lF9rQPuTFqwFNjZlvYdfUkpM");
+var slackClient = new SlackClient("xoxb-11323179413-2JUzcNpuzl8cwjHyJSEWxzb1");
 
 var LibComModule = require('./libcommander');
 var libcommander = new LibComModule();
@@ -44,6 +44,12 @@ libcommander.AddRootCommand(jkl);
         
         var groupRename = new LibComModule.LCommand("mv", 1, false, "Renames the required group", "*groupname*", handler.OnGroupRename);
         group.AddChild(groupRename);
+        
+        var groupSave = new LibComModule.LCommand("save", 1, false, "Saves all groups to a file", "*filename*", handler.SaveGroups);
+        group.AddChild(groupSave);
+        
+        var groupLoad = new LibComModule.LCommand("load", 1, false, "Loads all groups from a file", "*filename*", handler.LoadGroups);
+        group.AddChild(groupLoad);
     }
 
     var user = new LibComModule.LCommand("user", 1, false, "Manage users in groups", "", noCall);

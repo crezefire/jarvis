@@ -1,0 +1,25 @@
+{
+  "name": "Jarvis",
+  "version": "0.9.1",
+  "description": "A Slack bot",
+  "main": "jarvis-main.js",
+  "scripts": {
+    "start": "node jarvis-main.js"
+  },
+  "dependencies": {
+    "slack-client": "~1.4.x"
+  },
+  "engines": {
+    "node": "0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crezefire/jarvis"
+  },
+  "keywords": [
+    "jarvis",
+    "slack",
+    "bot"
+  ],
+  "license": "None"
+}

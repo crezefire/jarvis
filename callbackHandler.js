@@ -191,6 +191,14 @@ var CallbackHandler = function() {
 	CallbackHandler.prototype.GetVersion = function(args) {
 		slackChannel.send("Jarvis: " + CURRENT_VERSION);
 	}
+	
+	CallbackHandler.prototype.SaveGroups = function(args) {
+		groups.SaveGroupsToFile(args[0]);
+	}
+	
+	CallbackHandler.prototype.LoadGroups = function(args) {
+		groups.LoadGroupsFromFile(args[0]);
+	}
 
 }
 

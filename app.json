@@ -1,0 +1,7 @@
+{
+  "name": "Jarvis",
+  "description": "A Slack bot",
+  "repository": "https://github.com/crezefire/jarvis",
+  "logo": "https://raw.githubusercontent.com/crezefire/jarvis/master/jarvis-icon.png",
+  "keywords": ["slack", "bot", "jarvis"]
+}

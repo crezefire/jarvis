@@ -208,8 +208,20 @@ var group_api = function() {
   group_api.prototype.SetReminderForGroup = function(groupName, time, message) {
     if(!groups[groupName])
       return false;
-
-
+  }
+  
+  group_api.prototype.SaveGroupsToFile = function(fileName) {
+    
+    var fd = fs.openSync(fileName, "w");
+    
+    if(!fd)
+      return false;
+    
+    fs.writeSync(fd, groups, 0, groups.length, )
+  }
+  
+  group_api.prototype.LoadGroupsFromFile = function(fileName) {
+    console.log("Group load");
   }
 };
 
