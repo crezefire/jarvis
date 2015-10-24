@@ -1,7 +1,7 @@
 var groups_lib = require("./jarvis-group");
 var groups = new groups_lib();
 
-var CURRENT_VERSION = "0.10.0";
+var CURRENT_VERSION = "0.10.1";
 
 var CallbackHandler = function() {
 	
@@ -172,6 +172,13 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.Buddy = function(args) {
+		if(slackChannel.hasOwnProperty("id")) {
+			if(slackChannel.id[0] == 'D' || slackChannel.id[0] == 'd') {
+				slackChannel.send(">Buddy is only allowed in channels!!");
+				return;
+			}
+		}
+		
 		if(!groups.SelectBuddy(args[0], currentUser, slackChannel, slackClient)) {
 			slackChannel.send(">Group *" + args[0] + "* doesn't exist!");
 		}
@@ -189,17 +196,22 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.GetVersion = function(args) {
-		slackChannel.send("Jarvis: " + CURRENT_VERSION);
+		slackChannel.send(">Jarvis: " + CURRENT_VERSION);
 	}
 	
 	CallbackHandler.prototype.SaveGroups = function(args) {
 		groups.SaveGroupsToFile(args[0]);
+		slackChannel.send(">Groups have been saved........maybe");
 	}
 	
 	CallbackHandler.prototype.LoadGroups = function(args) {
-		groups.LoadGroupsFromFile(args[0]);
+		if(groups.LoadGroupsFromFile(args[0])) {
+			slackChannel.send(">Groups loaded, duplicates avoided!");
+		}
+		else {
+			slackChannel.send(">File not found!!");
+		}
 	}
-
 }
 
 module.exports = CallbackHandler;

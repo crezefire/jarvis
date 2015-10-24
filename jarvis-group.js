@@ -211,7 +211,6 @@ var group_api = function() {
   }
   
   group_api.prototype.SaveGroupsToFile = function(fileName) {
-    
       var file = fs.createWriteStream(fileName + ".groups");
                                   
       var fileBuffer = {};
@@ -225,12 +224,22 @@ var group_api = function() {
   }
   
   group_api.prototype.LoadGroupsFromFile = function(fileName) {
-    var obj = JSON.parse(fs.readFileSync(fileName + ".groups", 'utf8'));
+    var x;
+    try {
+      x = fs.readFileSync(fileName + ".groups", 'utf8');
+    }
+    catch(exception) {
+      return false;
+    }
+    
+    var obj = JSON.parse(x);
     
     for(var i in obj) {
       this.AddGroup(i);      
       this.AddUserToGroup(obj[i], i);
     }
+    
+    return true;
   }
 };
 
