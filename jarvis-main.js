@@ -26,8 +26,14 @@ slackClient.on('open', function() {
     console.log('Connected');
 });
 
+var channelID;
+
+var startTyping = function(args) {
+    slackClient._send({ type: "typing", channel: channelID });
+}
+
 //***********************
-var jkl = new LibComModule.LCommand(":jkl:", 1, false, "Interact with Jarvis", "-", noCall);
+var jkl = new LibComModule.LCommand(":jkl:", 1, false, "Interact with Jarvis", "-", startTyping);
 libcommander.AddRootCommand(jkl);
 {
     var group = new LibComModule.LCommand("group", 1, false, "Manage groups", "-", noCall);
@@ -95,6 +101,7 @@ slackClient.on('message', function(message) {
  
     console.log("Received: " + message);
     var channel = slackClient.getChannelGroupOrDMByID(message.channel);
+    channelID = message.channel;
     
     var cleanMessage = message.text.replace(/@/g, '');
 

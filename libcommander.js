@@ -107,6 +107,9 @@ var libcom = function() {
 			
 		if(commands[0] == this.RootCommand.name) {
 			
+			if(this.RootCommand.callback)
+				this.RootCommand.callback();
+			
 			var help = processHelp(commands[1], this.RootCommand);
 			
 			if(help != "false")

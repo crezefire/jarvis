@@ -1,7 +1,7 @@
 var groups_lib = require("./jarvis-group");
 var groups = new groups_lib();
 
-var CURRENT_VERSION = "0.10.1";
+var CURRENT_VERSION = "0.10.2";
 
 var CallbackHandler = function() {
 	
@@ -9,6 +9,10 @@ var CallbackHandler = function() {
 	var slackClient;
 	var channelID;
 	var currentUser;
+	
+	var SendTypingMessage = function() {
+		slackClient._send({ type: "typing", channel: channelID });
+	}
 	
 	CallbackHandler.prototype.SetupSlack = function(client) {
 		slackClient = client;
@@ -27,7 +31,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnGroupAdd = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		if(args[0].toLowerCase() == "public") {
 			if(groups.AddGroup(args[1])) {
@@ -46,7 +50,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnGroupList = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var list = groups.GroupList();
 		if(list != null) 
@@ -56,7 +60,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnGroupRemove = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var result = groups.RemoveGroup(args[0]);
 		
@@ -69,7 +73,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnGroupRename = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var result = groups.RenameGroup(args[0], args[1]);
 		
@@ -82,7 +86,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnUserAdd = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var allUsers = [];
 		var notFound = new String();
@@ -120,7 +124,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnUserList = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var list = groups.GetUsersOfGroup(args[0], slackClient);
 		if(list != null) 
@@ -130,7 +134,7 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.OnUserRemove = function(args) {
-		slackClient._send({ type: "typing", channel: channelID });
+		SendTypingMessage();
 		
 		var allUsers = [];
 		var notFound = new String();
@@ -172,6 +176,8 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.Buddy = function(args) {
+		SendTypingMessage();
+		
 		if(slackChannel.hasOwnProperty("id")) {
 			if(slackChannel.id[0] == 'D' || slackChannel.id[0] == 'd') {
 				slackChannel.send(">Buddy is only allowed in channels!!");
@@ -185,6 +191,8 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.SendMessage = function(args) {
+		SendTypingMessage();
+		
 		var message = new String();
 		for(var i = 1; i < args.length; ++i) {
 			message += args[i] + " ";
@@ -196,15 +204,21 @@ var CallbackHandler = function() {
 	}
 	
 	CallbackHandler.prototype.GetVersion = function(args) {
+		SendTypingMessage();
+		
 		slackChannel.send(">Jarvis: " + CURRENT_VERSION);
 	}
 	
 	CallbackHandler.prototype.SaveGroups = function(args) {
+		SendTypingMessage();
+		
 		groups.SaveGroupsToFile(args[0]);
 		slackChannel.send(">Groups have been saved........maybe");
 	}
 	
 	CallbackHandler.prototype.LoadGroups = function(args) {
+		SendTypingMessage();
+		
 		if(groups.LoadGroupsFromFile(args[0])) {
 			slackChannel.send(">Groups loaded, duplicates avoided!");
 		}
