@@ -1,5 +1,5 @@
 var SlackClient = require("slack-client");
-var slackClient = new SlackClient("xoxb-11323179413-ecAiDe9405FsY2EP3x5J3UL1");
+var slackClient = new SlackClient("");
 
 var LibComModule = require('./libcommander');
 var libcommander = new LibComModule();
@@ -65,7 +65,7 @@ libcommander.AddRootCommand(jkl);
         user.AddChild(userRemove);
     }
     
-    var buddy = new LibComModule.LCommand(":game_die:", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
+    var buddy = new LibComModule.LCommand("buddy", 1, false, "Selects a buddy from a group", "*groupname*", handler.Buddy);
     jkl.AddChild(buddy);
     
     var message = new LibComModule.LCommand("msg", 2, false, "Send DM to all users in a group", "*groupname* *message*", handler.SendMessage);
@@ -81,13 +81,19 @@ handler.SetupSlack(slackClient);
 slackClient.on('message', function(message) {
     if (message.user == bot.id) return; // Ignore bot's own messages
     
-    //very dirty solution, need a better way to check
-    if(message.text[0] == ":" && message.text[1] == "j" && message.text[2] == "k"
-        && message.text.length <= MAX_MESSAGE_LENGTH)
-    {}
-    else
-    {return;}
+    if(!message.hasOwnProperty('text'))
+        return;
+        
+    if(!message.hasOwnProperty('channel'))
+        return;
+        
+    if(!message.hasOwnProperty('user'))
+        return;
+    
+    if(message.text.length < 7 || message.text.length > MAX_MESSAGE_LENGTH)
+        return;
  
+    console.log("Received: " + message);
     var channel = slackClient.getChannelGroupOrDMByID(message.channel);
     
     var cleanMessage = message.text.replace(/@/g, '');
@@ -99,8 +105,11 @@ slackClient.on('message', function(message) {
     var output = libcommander.ProcessCommand(cleanMessage);
     
     if(output != "Success" && output != "Root command doesn't match") {
-         channel.send(output);   
+         channel.send(output);
     }
+    
+    console.log("Response: " + output);
+    console.log("==============================");
 });
  
 slackClient.login();

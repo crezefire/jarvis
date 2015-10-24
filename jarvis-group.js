@@ -48,14 +48,14 @@ var group_api = function() {
  
     var temp = groups[oldName];
     
-    if (!groups.hasOwnProperty(oldName))
-      return;
-    if (isNaN(parseInt(oldName)) || !(groups instanceof Array))
-      delete groups[oldName];
-    else
-      groups.splice(oldName, 1);
+    delete groups[oldName];
+    groups.splice(oldName, 1);
     
     groups[newName] = temp;
+    pools[newName] = pools[oldName];
+    
+    delete pools[oldName];
+    pools.splice(oldName, 1);
     
     return true;
   }
@@ -185,8 +185,8 @@ var group_api = function() {
     
     var dmChannel = slackClient.getDMByName(userName);
     
-    dmChannel.send(message);
-    
+    if(dmChannel)
+      dmChannel.send(message);
   }
   
   group_api.prototype.SendMessage = function(groupName, user, message, slackClient) {
@@ -212,16 +212,25 @@ var group_api = function() {
   
   group_api.prototype.SaveGroupsToFile = function(fileName) {
     
-    var fd = fs.openSync(fileName, "w");
-    
-    if(!fd)
-      return false;
-    
-    // fs.writeSync(fd, groups, 0, groups.length, )
+      var file = fs.createWriteStream(fileName + ".groups");
+                                  
+      var fileBuffer = {};
+      
+      for(var i in groups) {
+        fileBuffer[i] = groups[i];
+      }
+      
+      file.write(JSON.stringify(fileBuffer));
+      file.end();
   }
   
   group_api.prototype.LoadGroupsFromFile = function(fileName) {
-    console.log("Group load");
+    var obj = JSON.parse(fs.readFileSync(fileName + ".groups", 'utf8'));
+    
+    for(var i in obj) {
+      this.AddGroup(i);      
+      this.AddUserToGroup(obj[i], i);
+    }
   }
 };
 
