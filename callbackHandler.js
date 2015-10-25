@@ -11,7 +11,7 @@ var CallbackHandler = function() {
 	var currentUser;
 	
 	var SendTypingMessage = function() {
-		slackClient._send({ type: "typing", channel: channelID });
+		//slackClient._send({ type: "typing", channel: channelID });
 	}
 	
 	CallbackHandler.prototype.SetupSlack = function(client) {

@@ -26,6 +26,10 @@ slackClient.on('open', function() {
     console.log('Connected');
 });
 
+slackClient.on('error', function(args) {
+	console.log("Error: " + args);
+});
+
 var channelID;
 
 var startTyping = function(args) {
