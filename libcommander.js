@@ -7,7 +7,7 @@ Vimarsh Raina
 var ErrorCode = {
 	SUCCESS: "Success",
 	INSUFFICIENT: "InsufficientCommands",
-	NOT_FOUND: "Command not found",
+	NOT_FOUND: "Command not found: ",
 	ROOT_MISMATCH: "Root command doesn't match"
 };
 
@@ -96,7 +96,7 @@ var libcom = function() {
 			return ErrorCode.SUCCESS;	
 		}
 		
-		return ErrorCode.NOT_FOUND;	
+		return (ErrorCode.NOT_FOUND + commandsArray[currentIndex]);	
 	}
 	
 	libcom.prototype.ProcessCommand = function(commandString) {

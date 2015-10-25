@@ -1,7 +1,7 @@
 var groups_lib = require("./jarvis-group");
 var groups = new groups_lib();
 
-var CURRENT_VERSION = "0.10.3";
+var CURRENT_VERSION = "0.10.4";
 
 var CallbackHandler = function() {
 	
