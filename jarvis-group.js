@@ -147,9 +147,31 @@ var group_api = function() {
     }
   }
   
-  function SelectBuddyFromPoolAndRemove(groupName, channel, slackClient) {
-    var index = randomInt(0, pools[groupName].length);
+  function createSubPool(groupName, userName) {
+    var users = [];
+    for(var i in pools[groupName]) {
+      if(pools[groupName][i] != userName)
+        users.push(pools[groupName][i]);
+    }
     
+    if(users.length <= 0) {
+      var currentGroup = groups[groupName];
+      for(var i in currentGroup) {
+        pools[groupName].push(currentGroup[i]);
+      }
+      
+      return createSubPool(groupName, userName);
+    }
+    
+    return users;
+  }
+  
+  function SelectBuddyFromPoolAndRemove(groupName, userName, channel, slackClient) {
+    var currentPool = createSubPool(groupName, userName);
+    
+    var index = randomInt(0, currentPool.length);
+    
+    index = pools[groupName].indexOf(currentPool[index]);
     var toRemove = pools[groupName][index];
     
     var userName = slackClient.getUserByID(toRemove).name.toString();
@@ -168,7 +190,17 @@ var group_api = function() {
       
     var currentGroup = groups[groupName];
     
-    SelectBuddyFromPoolAndRemove(groupName, channel, slackClient);
+    if(currentGroup.length == 0) {
+      channel.send(">No users in group: " + groupName);
+      return true;
+    }
+    
+    if(currentGroup.length == 1) {
+      channel.send(">You are your own buddy!!");
+      return true;
+    }
+    
+    SelectBuddyFromPoolAndRemove(groupName, userName, channel, slackClient);
       
     //refill pool if empty
     if(pools[groupName].length <= 0) {
