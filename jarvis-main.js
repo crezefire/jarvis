@@ -31,9 +31,11 @@ slackClient.on('error', function(args) {
 });
 
 var channelID;
+var fullMessage;
 
 var startTyping = function(args) {
     slackClient._send({ type: "typing", channel: channelID });
+    console.log("Received: " + fullMessage);
 }
 
 //***********************
@@ -103,7 +105,7 @@ slackClient.on('message', function(message) {
     if(message.text.length < 7 || message.text.length > MAX_MESSAGE_LENGTH)
         return;
  
-    console.log("Received: " + message);
+    fullMessage = message;
     var channel = slackClient.getChannelGroupOrDMByID(message.channel);
     channelID = message.channel;
     
