@@ -98,9 +98,16 @@ slackClient.on('message', function(message) {
         
     if(!message.hasOwnProperty('channel'))
         return;
-        
+    
+    var useBot = false;
+    
     if(!message.hasOwnProperty('user'))
-        return;
+    {
+        if(!message.hasOwnProperty('bot_id'))
+            return;
+        else
+            useBot = true;
+    }
     
     if(message.text.length < 7 || message.text.length > MAX_MESSAGE_LENGTH)
         return;
@@ -113,8 +120,12 @@ slackClient.on('message', function(message) {
 
     handler.CurrentChannel(channel);
     handler.ChannelID(message.channel);
-    handler.CurrentUser(message.user);
     
+    if(useBot)
+        handler.CurrentUser(message.bot_id);
+    else
+        handler.CurrentUser(message.user);
+        
     var output = libcommander.ProcessCommand(cleanMessage);
     
     if(output != "Success" && output != "Root command doesn't match") {
