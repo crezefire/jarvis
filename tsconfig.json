@@ -1,0 +1,20 @@
+{
+   "typescript.tsdk": "./node_modules/typescript/lib",
+   "compilerOptions": {
+       "allowJs": true,
+       "diagnostics": true,
+       "strictNullChecks": true,
+       "target": "es5",
+       "sourceMap": true,
+       "typeRoots": [
+            "./node_modules/@types"
+         ]
+   },
+   "files": [
+       "main.ts",
+       "parseit.ts"
+   ],
+   "exclude": [
+        "./node_modules/*"
+    ]
+}
