@@ -15,8 +15,6 @@ var rtm = new RtmClient(token, {
   dataStore: new MemoryDataStore() // pass a new MemoryDataStore instance to cache information
 });
 
-//******************************************************************
-
 function NoCall(args : string[], arg_pos : number) : void {
   console.log("No Callback defined ::=>" + args.join(" "));
 }
@@ -75,7 +73,6 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, call
 }
 
 let command_parser = new ParseIt.Parser(jkl, 6, 100);
-//******************************************************************
 
 rtm.start();
 
@@ -101,12 +98,7 @@ rtm.on(CLIENT_EVENTS.RTM.ATTEMPTING_RECONNECT, function handleRTMAuthenticated(d
 
 //Message received
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-    //var currentChannel = rtm.dataStore.getChannelGroupOrDMById(message.channel);
-    //var currentUser = rtm.dataStore.getUserById(message.user);
-
     callback_handler.SetCurrentMessage(message);
 
     command_parser.ParseCommand(message.text);
-
-    //rtm.sendMessage("FUCK YOU MAN", message.channel);
 });
