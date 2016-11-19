@@ -1,26 +1,31 @@
 import * as ParseIt from "./parseit"
-import * as CommandCallbackHandler from "./callback_handler"
+import * as Handler from "./callback_handler"
 
 var RtmClient = require('@slack/client').RtmClient;
 var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 var MemoryDataStore = require('@slack/client').MemoryDataStore;
 
-var token = process.env.SLACK_API_TOKEN || 'xoxb-11323179413-KgaAglmvmvaSOnvLzyJpS2cn';
+var token = process.env.SLACK_API_TOKEN || '';
 
-function SendTypingMessage(args : Array<string>, arg_pos : number) : void {
+const endl = "\n";
 
-}
-
-function NoCall(args : Array<string>, arg_pos : number) : void {
-
-}
+var rtm = new RtmClient(token, {
+  logLevel: 'error', // check this out for more on logger: https://github.com/winstonjs/winston
+  dataStore: new MemoryDataStore() // pass a new MemoryDataStore instance to cache information
+});
 
 //******************************************************************
 
+function NoCall(args : string[], arg_pos : number) : void {
+  console.log("No Callback defined ::=>" + args.join(" "));
+}
+
+let callback_handler = new Handler.CallbackHandler(rtm);
+
 const NO_USAGE = "-";
 
-let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, SendTypingMessage);
+let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, callback_handler.OnRootCommand.bind(callback_handler));
 
 {
   let group = new ParseIt.Command("group", 1, "Manage groups", NO_USAGE, NoCall);
@@ -69,15 +74,8 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, Send
   jkl.AddChild(version);
 }
 
-let command_parser = new ParseIt.Parser(jkl);
+let command_parser = new ParseIt.Parser(jkl, 6, 100);
 //******************************************************************
-
-const endl = "\n";
-
-var rtm = new RtmClient(token, {
-  logLevel: 'error', // check this out for more on logger: https://github.com/winstonjs/winston
-  dataStore: new MemoryDataStore() // pass a new MemoryDataStore instance to cache information
-});
 
 rtm.start();
 
@@ -103,8 +101,12 @@ rtm.on(CLIENT_EVENTS.RTM.ATTEMPTING_RECONNECT, function handleRTMAuthenticated(d
 
 //Message received
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-    var currentChannel = rtm.dataStore.getChannelGroupOrDMById(message.channel);
-    var currentUser = rtm.dataStore.getUserById(message.user);
+    //var currentChannel = rtm.dataStore.getChannelGroupOrDMById(message.channel);
+    //var currentUser = rtm.dataStore.getUserById(message.user);
 
-    rtm.sendMessage("FUCK YOU MAN", message.channel);
+    callback_handler.SetCurrentMessage(message);
+
+    command_parser.ParseCommand(message.text);
+
+    //rtm.sendMessage("FUCK YOU MAN", message.channel);
 });

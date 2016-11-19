@@ -12,7 +12,9 @@
    },
    "files": [
        "main.ts",
-       "parseit.ts"
+       "parseit.ts",
+       "callback_handler.ts",
+       "group_manager.ts"
    ],
    "exclude": [
         "./node_modules/*"
