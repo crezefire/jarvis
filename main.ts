@@ -52,24 +52,18 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, call
   let user = new ParseIt.Command("user", 1,  "Manage users in groups", "", NoCall);
   jkl.AddChild(user);
   {
-      let userAdd = new ParseIt.Command("add", 2,  "Add user(s) to a group", "*<groupname>* *<name>* *<name>* ...", NoCall);
+      let userAdd = new ParseIt.Command("add", 2,  "Add user(s) to a group", "*<groupname>* *<name>* *<name>* ...", callback_handler.OnUserAdd.bind(callback_handler));
       user.AddChild(userAdd);
       
-      let userList = new ParseIt.Command("ls", 1,  "Lists all users in the group", "*<groupname>*", NoCall);
+      let userList = new ParseIt.Command("ls", 1,  "Lists all users in the group", "*<groupname>*", callback_handler.OnUserList.bind(callback_handler));
       user.AddChild(userList);
       
-      let userRemove = new ParseIt.Command("rm", 2,  "Removes user(s) from a group", "*<groupname>* *<user>* *<@user>* ...", NoCall);
+      let userRemove = new ParseIt.Command("rm", 2,  "Removes user(s) from a group", "*<groupname>* *<user>* *<@user>* ...", callback_handler.OnUserRemove.bind(callback_handler));
       user.AddChild(userRemove);
   }
   
   let buddy = new ParseIt.Command("buddy", 1,  "Selects a buddy from a group", "*<groupname>*", NoCall);
   jkl.AddChild(buddy);
-  
-  let message = new ParseIt.Command("msg", 2,  "Send DM to all users in a group", "*<groupname>* *<message>*", NoCall);
-  jkl.AddChild(message);
-  
-  let version = new ParseIt.Command("version", 0,  "Get current version of Jarvis", NO_USAGE, NoCall);
-  jkl.AddChild(version);
 }
 
 let command_parser = new ParseIt.Parser(jkl, 6, 100);

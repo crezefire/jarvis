@@ -24,7 +24,30 @@ class Group {
     }
 
     AddUsers(new_users : string[]) {
-        this.current_pool.concat(new_users);
+        for (let user of new_users) {
+            if (this.users.indexOf(user) >= 0) {
+                continue;
+            }
+
+            this.users.push(user);
+            this.current_pool.push(user);   
+        }
+    }
+
+    RemoveUser(user_name: string) : boolean {
+        let user_index = this.users.indexOf(user_name);
+
+        if (user_index < 0) {
+            return false;
+        }
+
+        this.users.splice(user_index, 1);
+
+        return true;
+    }
+
+    GetUsers() : string[] {
+        return this.users;
     }
 }
 
@@ -47,9 +70,9 @@ export class GroupManager {
     }
 
     CreateGroup(name : string) : boolean {
-        let groupIndex = this.FindGroupByName(name);
+        let group_index = this.FindGroupByName(name);
 
-        if (groupIndex >= 0) {
+        if (group_index >= 0) {
             return false;
         }
 
@@ -59,25 +82,25 @@ export class GroupManager {
     }
 
     RemoveGroup(name : string) : boolean {
-        let groupIndex = this.FindGroupByName(name);
+        let group_index = this.FindGroupByName(name);
 
-        if (groupIndex < 0) {
+        if (group_index < 0) {
             return false;
         }
 
-        this.groups.splice(groupIndex, 1);
+        this.groups.splice(group_index, 1);
 
         return true;
     }
 
     RenameGroup(old_name : string, new_name : string) : boolean {
-        let groupIndex = this.FindGroupByName(old_name);
+        let group_index = this.FindGroupByName(old_name);
 
-        if (groupIndex < 0) {
+        if (group_index < 0) {
             return false;
         }
 
-        this.groups[groupIndex].Rename(new_name);
+        this.groups[group_index].Rename(new_name);
 
         return true;
     }
@@ -125,5 +148,37 @@ export class GroupManager {
         }
 
         return true;
+    }
+
+    AddUsersToGroup(group_name : string, users : string[]) : boolean {
+        let group_index = this.FindGroupByName(group_name);
+
+        if (group_index < 0) {
+            return false;
+        }
+
+        this.groups[group_index].AddUsers(users);
+
+        return true;
+    }
+
+    ListUsersOfGroup(group_name : string) : string[] | null {
+        let group_index = this.FindGroupByName(group_name);
+
+        if (group_index < 0) {
+            return null;
+        }
+
+        return this.groups[group_index].GetUsers();
+    }
+
+    RemoveUserFromGroup(group_name : string, user_name : string) : boolean {
+        let group_index = this.FindGroupByName(group_name);
+
+        if (group_index < 0) {
+            return false;
+        }
+
+        return this.groups[group_index].RemoveUser(user_name);
     }
 }
