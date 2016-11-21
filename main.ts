@@ -23,46 +23,125 @@ let callback_handler = new Handler.CallbackHandler(rtm);
 
 const NO_USAGE = "-";
 
-let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, callback_handler.OnRootCommand.bind(callback_handler));
+let jkl = new ParseIt.Command(
+                              ":jkl:",
+                              1,
+                              "Interact with jarvis",
+                              NO_USAGE,
+                              callback_handler.OnRootCommand.bind(callback_handler)
+                              );
 
 {
-  let group = new ParseIt.Command("group", 1, "Manage groups", NO_USAGE, NoCall);
+  let group = new ParseIt.Command(
+                                  "group",
+                                  1,
+                                  "Manage groups",
+                                  NO_USAGE,
+                                  NoCall
+                                  );
   jkl.AddChild(group);
 
   {
-    let groupAdd = new ParseIt.Command("add", 1, "Add new group", "*<name>*", callback_handler.OnGroupAdd.bind(callback_handler));
+    let groupAdd = new ParseIt.Command(
+                                      "add",
+                                      1,
+                                      "Add new group",
+                                      "*<name>*",
+                                      callback_handler.OnGroupAdd.bind(callback_handler)
+                                      );
     group.AddChild(groupAdd);
 
-    let groupList = new ParseIt.Command("ls", 0, "Lists all groups", NO_USAGE, callback_handler.OnGroupList.bind(callback_handler));
+    let groupList = new ParseIt.Command(
+                                        "ls",
+                                        0,
+                                        "Lists all groups",
+                                        NO_USAGE,
+                                        callback_handler.OnGroupList.bind(callback_handler)
+                                        );
     group.AddChild(groupList);
 
-    let groupRemove = new ParseIt.Command("rm", 1, "Deletes the group", "*<groupname>*", callback_handler.OnGroupRemove.bind(callback_handler));
+    let groupRemove = new ParseIt.Command(
+                                          "rm",
+                                          1,
+                                          "Deletes the group",
+                                          "*<groupname>*",
+                                          callback_handler.OnGroupRemove.bind(callback_handler)
+                                          );
     group.AddChild(groupRemove);
     
-    let groupRename = new ParseIt.Command("mv", 2, "Renames the required group", "*<old_groupname>* *<new_groupname>*", callback_handler.OnGroupRename.bind(callback_handler));
+    let groupRename = new ParseIt.Command(
+                                          "mv",
+                                          2,
+                                          "Renames the required group",
+                                          "*<old_groupname>* *<new_groupname>*",
+                                          callback_handler.OnGroupRename.bind(callback_handler)
+                                          );
     group.AddChild(groupRename);
     
-    let groupSave = new ParseIt.Command("save", 1, "Saves all groups to a file", "*<filename>*", callback_handler.OnGroupSave.bind(callback_handler));
+    let groupSave = new ParseIt.Command(
+                                        "save",
+                                        1,
+                                        "Saves all groups to a file",
+                                        "*<filename>*",
+                                        callback_handler.OnGroupSave.bind(callback_handler)
+                                        );
     group.AddChild(groupSave);
     
-    let groupLoad = new ParseIt.Command("load", 1, "Loads all groups from a file", "*<filename>*", callback_handler.OnGroupLoad.bind(callback_handler));
+    let groupLoad = new ParseIt.Command(
+                                        "load",
+                                        1,
+                                        "Loads all groups from a file",
+                                        "*<filename>*",
+                                        callback_handler.OnGroupLoad.bind(callback_handler)
+                                        );
     group.AddChild(groupLoad);
   }
 
-  let user = new ParseIt.Command("user", 1,  "Manage users in groups", "", NoCall);
+  let user = new ParseIt.Command(
+                                "user",
+                                1,
+                                "Manage users in groups",
+                                "",
+                                NoCall
+                                );
   jkl.AddChild(user);
+
   {
-      let userAdd = new ParseIt.Command("add", 2,  "Add user(s) to a group", "*<groupname>* *<name>* *<name>* ...", callback_handler.OnUserAdd.bind(callback_handler));
+      let userAdd = new ParseIt.Command(
+                                        "add",
+                                        2,
+                                        "Add user(s) to a group",
+                                        "*<groupname>* *<name>* *<name>* ...",
+                                        callback_handler.OnUserAdd.bind(callback_handler)
+                                        );
       user.AddChild(userAdd);
       
-      let userList = new ParseIt.Command("ls", 1,  "Lists all users in the group", "*<groupname>*", callback_handler.OnUserList.bind(callback_handler));
+      let userList = new ParseIt.Command(
+                                        "ls",
+                                        1,
+                                        "Lists all users in the group",
+                                        "*<groupname>*",
+                                        callback_handler.OnUserList.bind(callback_handler)
+                                        );
       user.AddChild(userList);
       
-      let userRemove = new ParseIt.Command("rm", 2,  "Removes user(s) from a group", "*<groupname>* *<user>* *<@user>* ...", callback_handler.OnUserRemove.bind(callback_handler));
+      let userRemove = new ParseIt.Command(
+                                          "rm",
+                                          2,
+                                          "Removes user(s) from a group",
+                                          "*<groupname>* *<user>* *<@user>* ...",
+                                          callback_handler.OnUserRemove.bind(callback_handler)
+                                          );
       user.AddChild(userRemove);
   }
   
-  let buddy = new ParseIt.Command("buddy", 1,  "Selects a buddy from a group", "*<groupname>*", NoCall);
+  let buddy = new ParseIt.Command(
+                                  "buddy",
+                                  1,
+                                  "Selects a buddy from a group",
+                                  "*<groupname>*",
+                                  NoCall
+                                  );
   jkl.AddChild(buddy);
 }
 
@@ -94,5 +173,20 @@ rtm.on(CLIENT_EVENTS.RTM.ATTEMPTING_RECONNECT, function handleRTMAuthenticated(d
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
     callback_handler.SetCurrentMessage(message);
 
-    command_parser.ParseCommand(message.text);
+    let parse_result = command_parser.ParseCommand(message.text);
+
+    let error_message = ">";
+
+    switch (parse_result) {
+      case ParseIt.ParserError.INSUFFICIENT_ARGUMENTS:
+        error_message += "Insufficient arguments provided for command. Type *help* after to a command to view it's uasge.";
+        break;
+
+      default:
+        break;
+    }
+
+    if (error_message != ">") {
+      rtm.sendMessage(error_message, message.channel);
+    }
 });
