@@ -42,10 +42,10 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, call
     let groupRename = new ParseIt.Command("mv", 2, "Renames the required group", "*<old_groupname>* *<new_groupname>*", callback_handler.OnGroupRename.bind(callback_handler));
     group.AddChild(groupRename);
     
-    let groupSave = new ParseIt.Command("save", 1, "Saves all groups to a file", "*<filename>*", NoCall);
+    let groupSave = new ParseIt.Command("save", 1, "Saves all groups to a file", "*<filename>*", callback_handler.OnGroupSave.bind(callback_handler));
     group.AddChild(groupSave);
     
-    let groupLoad = new ParseIt.Command("load", 1, "Loads all groups from a file", "*<filename>*", NoCall);
+    let groupLoad = new ParseIt.Command("load", 1, "Loads all groups from a file", "*<filename>*", callback_handler.OnGroupLoad.bind(callback_handler));
     group.AddChild(groupLoad);
   }
 

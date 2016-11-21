@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 class Group {
     private users : string[];
     private current_pool : string[];
@@ -15,6 +17,14 @@ class Group {
 
     Rename(new_name : string ) : void {
         this.name = new_name;
+    }
+
+    ClearUserPool() : void {
+        this.current_pool.length = 0;
+    }
+
+    AddUsers(new_users : string[]) {
+        this.current_pool.concat(new_users);
     }
 }
 
@@ -80,5 +90,40 @@ export class GroupManager {
         }
 
         return groupNames;
+    }
+
+    SaveGroupsToFile(file_name : string) : void {
+        fs.writeFile(
+            file_name + ".groups.json",
+            JSON.stringify(this.groups),
+            null
+        );
+    }
+
+    LoadGroupsFromFile(file_name : string) : boolean {
+        let file_data : string;
+        
+        try {
+          file_data = fs.readFileSync(file_name + ".groups.json");
+        }
+        catch(exception) {
+            return false;
+        }
+
+        if (file_data.length <= 0) {
+            return false;
+        }
+
+        let group_data = JSON.parse(file_data);
+
+        this.groups.length = 0;
+
+        for (let group of group_data) {
+            let temp = new Group(group['name']);
+            this.groups.push(temp);
+            temp.AddUsers(group['users']);
+        }
+
+        return true;
     }
 }

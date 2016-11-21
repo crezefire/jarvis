@@ -13,7 +13,7 @@ export class CallbackHandler {
     }
 
     private SendMessageToChannel(message : string) : void {
-        this.slack_rtm.sendMessage(message, this.current_message.channel);
+        this.slack_rtm.sendMessage(this.PRE_FORMAT + message, this.current_message.channel);
     }
 
     private SendIsTypingMessageToChannel(channel : string) : void {
@@ -51,8 +51,8 @@ export class CallbackHandler {
 
         this.CheckSplitSend(
             !this.group_manager.CreateGroup(group_name),
-            this.PRE_FORMAT + "Group *[" + group_name + "]*" + " already exists",
-            this.PRE_FORMAT + "Group *[" + group_name + "]*" + " created successfully"
+            "Group *[" + group_name + "]*" + " already exists",
+            "Group *[" + group_name + "]*" + " created successfully"
         );
     }
 
@@ -61,8 +61,8 @@ export class CallbackHandler {
 
         this.CheckSplitSend(
             all_groups.length <= 0,
-            this.PRE_FORMAT + "No Groups exists yet",
-            this.PRE_FORMAT + "Groups are: " + all_groups.join(", ")
+            "No Groups exists yet",
+            "Groups are: " + all_groups.join(", ")
         );
     }
 
@@ -71,8 +71,8 @@ export class CallbackHandler {
 
         this.CheckSplitSend(
             !this.group_manager.RemoveGroup(group_name),
-            this.PRE_FORMAT + "Cannot find group *[" + group_name + "]*",
-            this.PRE_FORMAT + "Group *[" + group_name + "]* removed successfully"
+            "Cannot find group *[" + group_name + "]*",
+            "Group *[" + group_name + "]* removed successfully"
         );
     }
 
@@ -82,9 +82,26 @@ export class CallbackHandler {
 
         this.CheckSplitSend(
             !this.group_manager.RenameGroup(old_group_name, new_group_name),
-            this.PRE_FORMAT + "Cannot find group *[" + old_group_name + "]*",
-            this.PRE_FORMAT + "Group *[" + old_group_name + "]* renamed successfully to *[" + new_group_name + "]*"
+            "Cannot find group *[" + old_group_name + "]*",
+            "Group *[" + old_group_name + "]* renamed successfully to *[" + new_group_name + "]*"
         );
     }
 
+    OnGroupSave(args : string[], arg_pos : number) : void {
+        let file_name = args[arg_pos + 1];
+
+        this.group_manager.SaveGroupsToFile(file_name);
+
+        this.SendMessageToChannel("Groups saved to file *[" + file_name + "]*");
+    }
+
+    OnGroupLoad(args : string[], arg_pos : number) : void {
+        let file_name = args[arg_pos + 1];
+
+        this.CheckSplitSend(
+          this.group_manager.LoadGroupsFromFile(file_name),
+          "Groups loaded successfully",
+          "Failed to load groups from file: *[" + file_name + "]*"  
+        );
+    }
 }
