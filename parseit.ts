@@ -73,7 +73,7 @@ export class Parser {
             }
         }
         else {
-            parent.InvokeCallback(commands, index);
+            parent.InvokeCallback(commands, index - 1);
         }
 
         return ParserError.SUCCESS;

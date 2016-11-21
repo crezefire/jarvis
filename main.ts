@@ -30,10 +30,10 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, call
   jkl.AddChild(group);
 
   {
-    let groupAdd = new ParseIt.Command("add", 2, "Add new group", "*<name>*", NoCall);
+    let groupAdd = new ParseIt.Command("add", 1, "Add new group", "*<name>*", callback_handler.OnGroupAdd.bind(callback_handler));
     group.AddChild(groupAdd);
 
-    let groupList = new ParseIt.Command("ls", 0, "Lists all groups", NO_USAGE, NoCall);
+    let groupList = new ParseIt.Command("ls", 0, "Lists all groups", NO_USAGE, callback_handler.OnGroupList.bind(callback_handler));
     group.AddChild(groupList);
 
     let groupRemove = new ParseIt.Command("rm", 1, "Deletes the group", "*<groupname>*", NoCall);
