@@ -4,6 +4,7 @@ export class CallbackHandler {
     private slack_rtm : any;
     private current_message : any;
     private group_manager : Groups.GroupManager;
+    private PRE_FORMAT : string = ">";
     
     constructor(_slack_rtm : any) {
         this.slack_rtm =  _slack_rtm;
@@ -37,25 +38,41 @@ export class CallbackHandler {
 
     OnGroupAdd(args : string[], arg_pos : number) : void {
         let groupName = args[arg_pos + 1];
+        let message : string;
         
         if (!this.group_manager.CreateGroup(groupName)) {
-            this.SendMessageToChannel(">Group *[" + groupName + "]*" + " already exists");
+            message = this.PRE_FORMAT + "Group *[" + groupName + "]*" + " already exists";
         }
         else {
-            this.SendMessageToChannel(">Group *[" + groupName + "]*" + " created successfully");
+            message = this.PRE_FORMAT + "Group *[" + groupName + "]*" + " created successfully";
         }
+
+        this.SendMessageToChannel(message);
     }
 
     OnGroupList(args : string[], arg_pos : number) : void {
-
         let allGroups = this.group_manager.GetAllGroups();
         let message : string;
 
         if (allGroups.length <= 0) {
-            message = ">No Groups exists yet";
+            message = this.PRE_FORMAT + "No Groups exists yet";
         }
         else {
-            message = "> Groups are: " + allGroups.join(", ");
+            message = this.PRE_FORMAT + "Groups are: " + allGroups.join(", ");
+        }
+
+        this.SendMessageToChannel(message);
+    }
+
+    OnGroupRemove(args : string[], arg_pos : number) : void {
+        let groupName = args[arg_pos + 1];
+        let message : string;
+
+        if (!this.group_manager.RemoveGroup(groupName)) {
+            message = this.PRE_FORMAT + "Cannot find group *[" + groupName + "]*";
+        }
+        else {
+            message = this.PRE_FORMAT + "Group *[" + groupName + "]* removed successfully"; 
         }
 
         this.SendMessageToChannel(message);

@@ -44,6 +44,18 @@ export class GroupManager {
         return true;
     }
 
+    RemoveGroup(name : string) : boolean {
+        let groupIndex = this.FindGroupByName(name);
+
+        if (groupIndex < 0) {
+            return false;
+        }
+
+        this.groups.splice(groupIndex, 1);
+
+        return true;
+    }
+
     GetAllGroups() : string[] {
         let groupNames = new Array<string>();
 
