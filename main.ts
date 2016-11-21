@@ -39,7 +39,7 @@ let jkl = new ParseIt.Command(":jkl:", 1, "Interact with jarvis", NO_USAGE, call
     let groupRemove = new ParseIt.Command("rm", 1, "Deletes the group", "*<groupname>*", callback_handler.OnGroupRemove.bind(callback_handler));
     group.AddChild(groupRemove);
     
-    let groupRename = new ParseIt.Command("mv", 1, "Renames the required group", "*<groupname>*", NoCall);
+    let groupRename = new ParseIt.Command("mv", 2, "Renames the required group", "*<old_groupname>* *<new_groupname>*", callback_handler.OnGroupRename.bind(callback_handler));
     group.AddChild(groupRename);
     
     let groupSave = new ParseIt.Command("save", 1, "Saves all groups to a file", "*<filename>*", NoCall);

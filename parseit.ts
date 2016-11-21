@@ -85,7 +85,8 @@ export class Parser {
                 return ParserError.INVALID_MESSAGE_LENGTH;
             }
         
-        let sanite_spaces = message.replace(/  +/g, ' ');
+        let lower_case = message.toLowerCase();
+        let sanite_spaces = lower_case.replace(/  +/g, ' ');
         let commands = sanite_spaces.split(" ");
 
         if (commands.length < this.root_command.MinArgs()) {

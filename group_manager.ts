@@ -12,6 +12,10 @@ class Group {
     Name() : string {
         return this.name;
     }
+
+    Rename(new_name : string ) : void {
+        this.name = new_name;
+    }
 }
 
 export class GroupManager {
@@ -52,6 +56,18 @@ export class GroupManager {
         }
 
         this.groups.splice(groupIndex, 1);
+
+        return true;
+    }
+
+    RenameGroup(old_name : string, new_name : string) : boolean {
+        let groupIndex = this.FindGroupByName(old_name);
+
+        if (groupIndex < 0) {
+            return false;
+        }
+
+        this.groups[groupIndex].Rename(new_name);
 
         return true;
     }
