@@ -179,7 +179,11 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 
     switch (parse_result) {
       case ParseIt.ParserError.INSUFFICIENT_ARGUMENTS:
-        error_message += "Insufficient arguments provided for command. Type *help* after to a command to view it's uasge.";
+        error_message += "Insufficient arguments provided for command *[" + command_parser.GetLastError() + "]*.\n>Type *help* after to a command to view it's uasge.";
+        break;
+      
+      case ParseIt.ParserError.COMMAND_NOT_FOUND:
+        error_message += "Command *[" + command_parser.GetLastError() + "]* not found!"; 
         break;
 
       default:

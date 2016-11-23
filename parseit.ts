@@ -43,13 +43,15 @@ export enum ParserError {
     SUCCESS,
     INVALID_MESSAGE_LENGTH,
     INSUFFICIENT_ARGUMENTS,
-    ROOT_COMMAND_MISMATCh
+    ROOT_COMMAND_MISMATCH,
+    COMMAND_NOT_FOUND
 }
 
 export class Parser {
     private root_command : Command;
     private min_root_message_length : number;
     private max_root_message_length : number;
+    private last_error_command : string;
 
     constructor(_root : Command, min_message_length : number, max_message_length : number) {
         this.root_command = _root;
@@ -59,6 +61,7 @@ export class Parser {
 
     private ProcessSubCommands(commands : string[], index : number, parent : Command) : ParserError {
         if (commands.length - index  < parent.MinArgs()) {
+            this.last_error_command = commands[index - 1];
             return ParserError.INSUFFICIENT_ARGUMENTS;
         }
 
@@ -74,9 +77,11 @@ export class Parser {
         }
         else {
             parent.InvokeCallback(commands, index - 1);
+            return ParserError.SUCCESS;
         }
 
-        return ParserError.SUCCESS;
+        this.last_error_command = commands[index];
+        return ParserError.COMMAND_NOT_FOUND;
     }
 
     ParseCommand(message : string) : ParserError {
@@ -94,11 +99,15 @@ export class Parser {
         }
 
         if (this.root_command.Name() != commands[0]) {
-            return ParserError.ROOT_COMMAND_MISMATCh;
+            return ParserError.ROOT_COMMAND_MISMATCH;
         }
 
         this.root_command.InvokeCallback(commands, 0);
 
         return this.ProcessSubCommands(commands, 1, this.root_command);
+    }
+
+    GetLastError() : string {
+        return this.last_error_command;
     }
 }
