@@ -221,6 +221,11 @@ export class CallbackHandler {
         let all_users = <string[]>this.group_manager.ListUsersOfGroup(group_name);
         let named_users = new Array<string>();
 
+        if (all_users == null) {
+            this.SendMessageToChannel("Cannot find group *[" + group_name + "]*");
+            return;
+        }
+
         for (let i = 0; i < all_users.length; ++i) {
             let user_name = this.GetNameOfUser(all_users[i]);
 
