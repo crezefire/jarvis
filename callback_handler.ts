@@ -48,6 +48,24 @@ export class CallbackHandler {
         }
     }
 
+    private GetSubPool(current_pool : string[]) : string[] {
+        let sub_pool = new Array<string>();
+        let user_id : string = this.current_message.user; 
+
+        for (let user of current_pool) {
+            if (user_id == user)
+                continue;
+            
+            let user_data = this.GetNameOfUser(user);
+
+            if (user_data.presence == "active") {
+                sub_pool.push(user);
+            }
+        }
+
+        return sub_pool;
+    }
+
     SetCurrentMessage(_current_message : any) : void {
         this.current_message = _current_message;
     }
@@ -218,6 +236,24 @@ export class CallbackHandler {
         );
     }
 
+    private CheckSubPool(current_pool : string[], current_group : string[], group_name : string) : string[] | null {
+        let sub_pool = this.GetSubPool(current_pool);
+
+        if (sub_pool.length == 0) {
+
+            if (current_pool.length == current_group.length) {
+                this.SendMessageToChannel("No users of group *[" + group_name + "]* are online!");
+                return null;
+            }
+            else {
+                this.group_manager.RefreshPool(group_name);
+                return this.CheckSubPool(current_group, current_group, group_name);
+            }
+        }
+
+        return sub_pool;
+    }
+
     OnPickBuddy(args : string[], arg_pos : number) : void {
         let group_name = args[arg_pos + 1];
 
@@ -247,10 +283,18 @@ export class CallbackHandler {
                 this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_pool[0]).name);
             }
 
+            this.group_manager.RemoveUserFromPools(current_pool[0]);
             return;
         }
 
-        let current_user = current_pool[ this.random_number.nextInt(0, current_pool.length) ];
+        let valid_pool  = this.CheckSubPool(current_pool, current_groups, group_name);
+        let sub_pool = <string[]>valid_pool;
+
+        if (sub_pool == null) {
+            return;
+        }
+
+        let current_user =  sub_pool [ this.random_number.nextInt(0, sub_pool.length) ];
         
         this.group_manager.RemoveUserFromPools(current_user);
 

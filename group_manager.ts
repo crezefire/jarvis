@@ -73,6 +73,14 @@ class Group {
 
         return true;
     }
+
+    RefreshPool() : void {
+        this.current_pool.length = 0;
+
+        for (let user of this.users) {
+            this.current_pool.push(user);
+        }
+    }
 }
 
 export class GroupManager {
@@ -220,5 +228,15 @@ export class GroupManager {
         for (let group of this.groups) {
             group.RemoveUserFromPool(user_name);
         }
+    }
+
+    RefreshPool(group_name : string) : void {
+        let group_index = this.FindGroupByName(group_name);
+
+        if (group_index < 0) {
+            return;
+        }
+
+        this.groups[group_index].RefreshPool();
     }
 }
