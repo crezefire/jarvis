@@ -140,7 +140,7 @@ let jkl = new ParseIt.Command(
                                   1,
                                   "Selects a buddy from a group",
                                   "*<groupname>*",
-                                  NoCall
+                                  callback_handler.OnPickBuddy.bind(callback_handler)
                                   );
   jkl.AddChild(buddy);
 }

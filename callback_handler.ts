@@ -20,10 +20,12 @@ export class CallbackHandler {
         this.slack_rtm.sendTyping(channel);
     }
 
+    //TODO(vim): Make type safe
     private GetNameOfUser(id : string) : any {
-        return this.slack_rtm.dataStore.getUserById(id);
+        return this.slack_rtm.dataStore.getUserById(id).name;
     }
 
+    //TODO(vim): Make type safe
     private GetIdOfUser(name: string) : any {
         return this.slack_rtm.dataStore.getUserByName(name);
     }
@@ -210,5 +212,38 @@ export class CallbackHandler {
         this.SendMessageToChannel(
             "Users in group *[" + group_name + "]*: " +  named_users.join(", ")
         );
+    }
+
+    OnPickBuddy(args : string[], arg_pos : number) : void {
+        let group_name = args[arg_pos + 1];
+
+        let pool = this.group_manager.GetPoolFromGroup(group_name);
+        let current_pool = <string[]>(pool);
+
+        if (current_pool == null) {
+            this.SendMessageToChannel("Group *[" + group_name + "]* not found!");
+            
+            return;
+            //TODO(vim): Did you mean ....this group.....
+        }
+
+        if (current_pool.length == 0) {
+            this.SendMessageToChannel("No users in group *[" + group_name + "]*");
+
+            return;
+        }
+
+        if (current_pool.length == 1) {
+
+            if(current_pool[0] == this.current_message.user.toUpperCase()) {
+                this.SendMessageToChannel("You are your own buddy!");
+            }
+            else {
+                this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_pool[0]));
+            }
+
+            return;
+        }
+
     }
 }

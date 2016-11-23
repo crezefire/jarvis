@@ -43,11 +43,24 @@ class Group {
 
         this.users.splice(user_index, 1);
 
+        //TODO(vim): Possible duplication
+        let pool_index = this.current_pool.indexOf(user_name);
+
+        if (pool_index < 0) {
+            return false;
+        }
+
+        this.current_pool.splice(pool_index, 1);
+
         return true;
     }
 
     GetUsers() : string[] {
         return this.users;
+    }
+
+    GetPool() : string[] {
+        return this.current_pool;
     }
 }
 
@@ -180,5 +193,15 @@ export class GroupManager {
         }
 
         return this.groups[group_index].RemoveUser(user_name);
+    }
+
+    GetPoolFromGroup(group_name : string) : string[] | null {
+        let group_index = this.FindGroupByName(group_name);
+
+        if (group_index < 0) {
+            return null;
+        }
+
+        return this.groups[group_index].GetPool();
     }
 }
