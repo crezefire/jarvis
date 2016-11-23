@@ -14,7 +14,8 @@
        "main.ts",
        "parseit.ts",
        "callback_handler.ts",
-       "group_manager.ts"
+       "group_manager.ts",
+       "rng.ts"
    ],
    "exclude": [
         "./node_modules/*"

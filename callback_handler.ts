@@ -1,15 +1,19 @@
 import * as Groups from "./group_manager"
+import * as RNG from "./rng"
 
 export class CallbackHandler {
     private slack_rtm : any;
     private current_message : any;
     private group_manager : Groups.GroupManager;
+    private random_number : RNG.RNG;
     private PRE_FORMAT : string = ">";
     
     constructor(_slack_rtm : any) {
         this.slack_rtm =  _slack_rtm;
         this.current_message = null;
         this.group_manager = new Groups.GroupManager();
+        let date = new Date();
+        this.random_number = new RNG.RNG(date.getTime());
     }
 
     private SendMessageToChannel(message : string) : void {
@@ -22,7 +26,7 @@ export class CallbackHandler {
 
     //TODO(vim): Make type safe
     private GetNameOfUser(id : string) : any {
-        return this.slack_rtm.dataStore.getUserById(id).name;
+        return this.slack_rtm.dataStore.getUserById(id);
     }
 
     //TODO(vim): Make type safe
@@ -217,6 +221,7 @@ export class CallbackHandler {
     OnPickBuddy(args : string[], arg_pos : number) : void {
         let group_name = args[arg_pos + 1];
 
+        let current_groups = <string[]>this.group_manager.ListUsersOfGroup(group_name);
         let pool = this.group_manager.GetPoolFromGroup(group_name);
         let current_pool = <string[]>(pool);
 
@@ -227,23 +232,28 @@ export class CallbackHandler {
             //TODO(vim): Did you mean ....this group.....
         }
 
-        if (current_pool.length == 0) {
+        if (current_groups.length == 0) {
             this.SendMessageToChannel("No users in group *[" + group_name + "]*");
 
             return;
         }
 
-        if (current_pool.length == 1) {
+        if (current_groups.length == 1) {
 
-            if(current_pool[0] == this.current_message.user.toUpperCase()) {
+            if(current_groups[0] == this.current_message.user.toUpperCase()) {
                 this.SendMessageToChannel("You are your own buddy!");
             }
             else {
-                this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_pool[0]));
+                this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_pool[0]).name);
             }
 
             return;
         }
 
+        let current_user = current_pool[ this.random_number.nextInt(0, current_pool.length) ];
+        
+        this.group_manager.RemoveUserFromPools(current_user);
+
+        this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_user).name);
     }
 }
