@@ -305,4 +305,8 @@ export class CallbackHandler {
 
         this.SendMessageToChannel("Buddy kicked: @" + this.GetNameOfUser(current_user).name);
     }
+
+    OnPrintHelp(message : string) : void {
+        this.SendMessageToChannel(message);
+    }
 }

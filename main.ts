@@ -129,7 +129,7 @@ let jkl = new ParseIt.Command(
                                           "rm",
                                           2,
                                           "Removes user(s) from a group",
-                                          "*<groupname>* *<user>* *<@user>* ...",
+                                          "*<groupname>* *<user>* *<@ user>* ...",
                                           callback_handler.OnUserRemove.bind(callback_handler)
                                           );
       user.AddChild(userRemove);
@@ -147,7 +147,10 @@ let jkl = new ParseIt.Command(
 
 const MIN_ROOT_MESSAGE_LENGTH = 6;
 const MAX_ROOT_MESSAGE_LENGTH = 500;
-let command_parser = new ParseIt.Parser(jkl, MIN_ROOT_MESSAGE_LENGTH, MAX_ROOT_MESSAGE_LENGTH);
+let command_parser = new ParseIt.Parser(jkl,
+                                        MIN_ROOT_MESSAGE_LENGTH,
+                                        MAX_ROOT_MESSAGE_LENGTH,
+                                        callback_handler.OnPrintHelp.bind(callback_handler));
 
 rtm.start();
 
