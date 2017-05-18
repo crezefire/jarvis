@@ -21,7 +21,7 @@ function NoCall(args : string[], arg_pos : number) : void {
 
 let callback_handler = new Handler.CallbackHandler(rtm);
 
-const NO_USAGE = "-";
+const NO_USAGE = "";
 
 let jkl = new ParseIt.Command(
                               ":jkl:",
@@ -145,7 +145,9 @@ let jkl = new ParseIt.Command(
   jkl.AddChild(buddy);
 }
 
-let command_parser = new ParseIt.Parser(jkl, 6, 100);
+const MIN_ROOT_MESSAGE_LENGTH = 6;
+const MAX_ROOT_MESSAGE_LENGTH = 500;
+let command_parser = new ParseIt.Parser(jkl, MIN_ROOT_MESSAGE_LENGTH, MAX_ROOT_MESSAGE_LENGTH);
 
 rtm.start();
 
@@ -171,6 +173,13 @@ rtm.on(CLIENT_EVENTS.RTM.ATTEMPTING_RECONNECT, function handleRTMAuthenticated(d
 
 //Message received
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
+
+    if(!message.hasOwnProperty('text'))
+        return;
+        
+    if(!message.hasOwnProperty('channel'))
+        return;
+
     callback_handler.SetCurrentMessage(message);
 
     let parse_result = command_parser.ParseCommand(message.text);
